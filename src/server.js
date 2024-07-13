@@ -7,7 +7,7 @@ const PORT = 3000;
 // MDN Magic String
 const MAGIC_STRING = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 const sockets = new Set();
-let clientID = 0;
+
 // Serve Static Files
 const serveFile = (res, filePath, contentType) => {
     fs.createReadStream(filePath)
