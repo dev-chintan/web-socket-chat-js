@@ -1,12 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
     const socket = new WebSocket("ws://localhost:3000");
 
+    const messageList = document.getElementById("message-list");
+    const messageInput = document.getElementById("message-input");
+    const sendMessageBtn = document.getElementById("send-message");
+
     socket.onopen = () => {
-        console.log("WebSocket open!");
+        console.log("WebSocket open.");
     }
 
     socket.onmessage = (event) => {
         console.log("WebSocket message: " + event.data);
+        messageList.value += event.data + "\n";
     }
 
     socket.onclose = () => {
@@ -17,10 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("WebSocket error: " + event);
     }
 
-    let messageList = document.getElementById("message-list");
-    let messageInput = document.getElementById("message-input");
-    let sendMessageBtn = document.getElementById("send-message");
-
     sendMessageBtn.addEventListener("click", () => {
         const message = messageInput.value.trim();
         if(!message) {
@@ -28,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         socket.send(message);
+
+        messageInput.value = "";
     })
 
     messageInput.addEventListener("keydown", (event) => {
