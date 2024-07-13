@@ -147,7 +147,6 @@ server.on('upgrade', (req, socket, head) => {
     );
 
     sockets.add(socket);
-    clientID++;
 
     socket.on('data', (frame) => handleSocketData(socket, frame));
     socket.on('end', () => handleSocketEnd(socket));
