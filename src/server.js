@@ -71,6 +71,7 @@ const handleSocketData = (socket, frame ) => {
     }
 
     let maskingKey;
+
     if (MASK) {
         maskingKey = frame.slice(offset, offset + 4); // Read the 4-byte masking key
         offset += 4;
@@ -84,33 +85,34 @@ const handleSocketData = (socket, frame ) => {
             payloadData[i] ^= maskingKey[i % 4];
         }
     }
+
     switch (OPCODE) {
         case 0x1: // Text Frame
             const textFrame = payloadData.toString();
-            console.log("Text Frame: ", textFrame);
+            console.log('Text Frame:', textFrame);
             // Broadcast to all connected clients
             sockets.forEach(clientSocket => {
-                if(clientSocket.readyState === "open"){
+                if(clientSocket.readyState === 'open'){
                     clientSocket.write(Buffer.from([0x81, textFrame.length, ...Buffer.from(textFrame)]));
                 }
             })
             break;
         case 0x2: // Binary Frame
-            console.log("Binary Frame: ", payloadData);
+            console.log('Binary Frame:', payloadData);
             break;
         case 0x8: // Connection Close Frame
-            console.log("Connection Close Frame");
+            console.log('Connection Close Frame');
             socket.end();
             break;
         case 0x9: // Ping Frame
-            console.log("Ping Frame")
+            console.log('Ping Frame')
             socket.write(Buffer.from([0x8a, 0x00]))
             break;
         case 0xA: // Pong Frame
-            console.log("Pong Frame");
+            console.log('Pong Frame');
             break;
         default:
-            console.log("Unknown Frame");
+            console.log('Unknown Frame');
             break;
     }
 };
@@ -143,7 +145,8 @@ server.on('upgrade', (req, socket, head) => {
         'HTTP/1.1 101 Switching Protocols\r\n' +
         'Upgrade: WebSocket\r\n' +
         'Connection: Upgrade\r\n' +
-        `Sec-WebSocket-Accept: ${socketHash}\r\n\r\n`
+        `Sec-WebSocket-Accept: ${socketHash}\r\n`+
+        '\r\n'
     );
 
     sockets.add(socket);
@@ -154,7 +157,7 @@ server.on('upgrade', (req, socket, head) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`Server running on PORT: ${PORT}`);
+    console.log('Server running on PORT:', PORT);
 });
 
 server.on('error', (error) => {
